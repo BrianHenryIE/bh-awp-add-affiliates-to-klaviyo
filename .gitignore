@@ -45,3 +45,5 @@ wordpress
 src/vendor/
 src/dependencies/
 wp-content/
+
+*.zip
