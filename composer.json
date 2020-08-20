@@ -1,0 +1,129 @@
+{
+    "name": "brianhenryie/bh-awp-add-affiliates-to-klaviyo",
+    "description": "This is a short description of what plugin_title does.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0+-or-later",
+    "authors": [
+        {
+            "name": "Brian Henry",
+            "email": "BrianHenryIE@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "process-timeout": 0
+    },
+    "repositories": [
+        {
+            "url": "https://github.com/WordPress/wordpress-develop",
+            "type": "git"
+        },
+        {
+            "url": "https://github.com/pablo-sg-pacheco/wp-namespace-autoloader",
+            "type": "git"
+        },
+        {
+            "url": "https://github.com/BrianHenryIE/WPPB-lib",
+            "type": "git"
+        },
+        {
+            "url": "https://github.com/BrianHenryIE/composer-phpstorm",
+            "type": "git"
+        },
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org"
+        }
+    ],
+    "require": {
+        "brianhenryie/wppb-lib": "dev-master",
+        "php": ">=7.2",
+        "pablo-sg-pacheco/wp-namespace-autoloader": "dev-master",
+        "katzgrau/klogger": "dev-master"
+    },
+    "require-dev": {
+        "wpackagist-theme/twentytwenty":"*",
+        "cweagans/composer-patches": "~1.0",
+        "coenjacobs/mozart": "dev-master",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "wordpress/wordpress": "^5.4",
+        "kporras07/composer-symlinks": "dev-master",
+        "phpunit/phpunit": ">=7.0",
+        "phpunit/phpcov": "^5.0",
+        "10up/wp_mock": "0.4.2",
+        "brianhenryie/composer-phpstorm": "dev-master",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "lucatume/wp-browser": "*",
+        "codeception/module-asserts": "^1.0",
+        "voku/portable-ascii": "dev-master",
+        "codeception/module-db": "^1.0.0",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-webdriver": "^1.0",
+        "codeception/module-filesystem": "^1.0",
+        "codeception/module-cli": "^1.0",
+        "codeception/util-universalframework": "^1.0",
+        "wpackagist-plugin/klaviyo": "^2.2"
+    },
+    "extra": {
+        "patches": {
+            "coenjacobs/mozart": {
+                "DIRECTORY_SEPARATOR": "https://github.com/coenjacobs/mozart/pull/61.patch",
+                "Delete empty directories": "https://github.com/coenjacobs/mozart/pull/59.patch"
+            }
+        },
+        "mozart": {
+            "dep_namespace": "BH_AWP_Add_Affiliates_to_Klaviyo\\",
+            "dep_directory": "/src/vendor/",
+            "classmap_prefix": "BH_AWP_Add_Affiliates_to_Klaviyo_",
+            "classmap_directory": "/src/dependencies/",
+            "delete_vendor_directories": false,
+            "override_autoload": {
+                "katzgrau/klogger": {
+                    "psr-4": {
+                        "Katzgrau\\KLogger\\": "src/"
+                    }
+                }
+            }
+        },
+        "symlinks": {
+            "wp-content": "wordpress/wp-content",
+            "src": "wp-content/plugins/bh-awp-add-affiliates-to-klaviyo"
+        },
+        "phpstorm": {
+            "exclude_folders": {
+                "folders": [
+                    "vendor/wordpress/wordpress/src",
+                    "vendor/wordpress/wordpress/build",
+                    "wp-content/plugins/bh-awp-add-affiliates-to-klaviyo",
+                    "wordpress/wp-content/plugins"
+                ],
+                "include_folders": [
+                    "vendor/wordpress/wordpress/"
+                ],
+                "composer-symlinks": false
+            }
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "\"vendor/bin/mozart\" compose",
+            "vendor/bin/wp core download --path=wordpress || true;",
+            "export $(grep -v '^#' .env.testing | xargs); vendor/bin/wp config create --dbname=$TEST_SITE_DB_NAME --dbuser=$TEST_SITE_DB_USER --dbpass=$TEST_SITE_DB_PASSWORD --path=wordpress || true",
+            "Kporras07\\ComposerSymlinks\\ScriptHandler::createSymlinks",
+            "mkdir -p wordpress/wp-content/uploads",
+            "BrianHenryIE\\ComposerPhpStorm\\ExcludeFolders::update",
+            "BrianHenryIE\\ComposerPhpStorm\\PHPUnitRunConfigurations::update"
+        ],
+        "post-update-cmd": [
+            "\"vendor/bin/mozart\" compose",
+            "vendor/bin/wp core download --path=wordpress || true;",
+            "export $(grep -v '^#' .env.testing | xargs); vendor/bin/wp config create --dbname=$TEST_SITE_DB_NAME --dbuser=$TEST_SITE_DB_USER --dbpass=$TEST_SITE_DB_PASSWORD --path=wordpress || true",
+            "Kporras07\\ComposerSymlinks\\ScriptHandler::createSymlinks",
+            "mkdir -p wordpress/wp-content/uploads",
+            "BrianHenryIE\\ComposerPhpStorm\\ExcludeFolders::update",
+            "BrianHenryIE\\ComposerPhpStorm\\PHPUnitRunConfigurations::update"
+        ]
+    }
+}
