@@ -63,7 +63,7 @@ class Settings_Tab {
 
 		// Try to get the public API key from the official Klaviyo plugin.
 		$klaviyo_plugin_settings = get_option( 'klaviyo_settings', array() );
-		$klaviyo_public_api_key = '';
+		$klaviyo_public_api_key  = '';
 		$klaviyo_private_api_key = '';
 		if ( isset( $klaviyo_plugin_settings['public_api_key'] ) ) {
 			$klaviyo_public_api_key = $klaviyo_plugin_settings['public_api_key'];

@@ -2,7 +2,6 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo\api;
 
-use WP_CLI;
 use WP_CLI_Command;
 
 class CLI extends WP_CLI_Command {

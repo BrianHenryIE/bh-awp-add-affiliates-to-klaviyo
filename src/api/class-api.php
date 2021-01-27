@@ -29,6 +29,7 @@ class API implements API_Interface {
 	}
 
 	/**
+	 * TODO: This should be in settings?
 	 *
 	 * @return bool
 	 */
@@ -51,12 +52,12 @@ class API implements API_Interface {
 			return $changes;
 		}
 
-		$already_running = get_transient('bh-awp-add-affiliiates-to-klaviyo-running');
-		if( !empty( $already_running ) && false == $manual) {
-			return array('message'=>'Already running: ' . $already_running );
+		$already_running = get_transient( 'bh-awp-add-affiliiates-to-klaviyo-running' );
+		if ( ! empty( $already_running ) && false == $manual ) {
+			return array( 'message' => 'Already running: ' . $already_running );
 		}
 
-		set_transient('bh-awp-add-affiliiates-to-klaviyo-running', time(), 5 * MINUTE_IN_SECONDS  );
+		set_transient( 'bh-awp-add-affiliiates-to-klaviyo-running', time(), 5 * MINUTE_IN_SECONDS );
 
 		$this->logger->debug( 'Updating all Klaviyo affiliate lists' );
 
@@ -76,7 +77,7 @@ class API implements API_Interface {
 
 			$affiliates[ $affiliate_status ] = array();
 			do {
-				$page_of_affiliates = $affiliate_ap->affiliates->get_affiliates( $affiliates_query );
+				$page_of_affiliates              = $affiliate_ap->affiliates->get_affiliates( $affiliates_query );
 				$affiliates[ $affiliate_status ] = array_merge( $page_of_affiliates, $affiliates[ $affiliate_status ] );
 				$affiliates_query['offset']      = intval( $affiliates_query['offset'] ) + $paging;
 			} while ( count( $page_of_affiliates ) === $paging );
@@ -98,7 +99,7 @@ class API implements API_Interface {
 
 		foreach ( array_keys( affwp_get_affiliate_statuses() ) as $status ) {
 			$affiliate_profiles_by_status[ $status ] = array_map( array( $this, 'get_klaviyo_array' ), $affiliates[ $status ] );
-			$affiliate_emails_by_status[ $status ] = array_map( $get_email_from_affiliate, $affiliates[ $status ] );
+			$affiliate_emails_by_status[ $status ]   = array_map( $get_email_from_affiliate, $affiliates[ $status ] );
 		}
 
 		// Add the affiliate profile to where it should be.
@@ -124,9 +125,9 @@ class API implements API_Interface {
 			// Check who is already in the list.
 			try {
 
-				$email_addresses_arrays = array_chunk( $affiliate_emails_by_status[ $status ],  99 );
+				$email_addresses_arrays = array_chunk( $affiliate_emails_by_status[ $status ], 99 );
 
-				foreach( $email_addresses_arrays as $email_addresses ) {
+				foreach ( $email_addresses_arrays as $email_addresses ) {
 					$this->logger->debug( 'Checking emails ' . count( $email_addresses ) . ' against list ' . $list_id );
 
 					// Limit of 100 emails per request.
@@ -134,19 +135,19 @@ class API implements API_Interface {
 
 					$this->logger->debug( 'Found emails ' . count( $response ) . ' emails already present in list ' . $list_id );
 
-					$existing_list_members = array_merge( $response, $existing_list_members);
+					$existing_list_members = array_merge( $response, $existing_list_members );
 				}
 			} catch ( KlaviyoException $e ) {
-				$this->logger->error( 'KlaviyoException ' . $e->getCode()  .': ' . $e->getMessage(), array( 'KlaviyoException' => $e ));
+				$this->logger->error( 'KlaviyoException ' . $e->getCode() . ': ' . $e->getMessage(), array( 'KlaviyoException' => $e ) );
 				return array();
 			}
 			/** @var array $existing_list_members_emails array of arrays for each user, as returned from Klaviyo  */
 			$existing_list_members_emails = array_map(
 				function( $element ) {
-					if( isset(  $element['email'] ) ) {
+					if ( isset( $element['email'] ) ) {
 						return $element['email'];
 					} else {
-						$this->logger->debug( 'email not present in element', array( 'element' => $element ));
+						$this->logger->debug( 'email not present in element', array( 'element' => $element ) );
 						return null;
 					}
 				},
@@ -160,7 +161,7 @@ class API implements API_Interface {
 
 			$new_members_to_add = array_filter( $affiliate_profiles_by_status[ $status ], $check_for_profilemodel );
 
-			$this->logger->debug( 'Found ' . count( $new_members_to_add ) . ' to add to list ' . $list_id  );
+			$this->logger->debug( 'Found ' . count( $new_members_to_add ) . ' to add to list ' . $list_id );
 
 			$changes[ $list_id ]['add'] = $new_members_to_add;
 
@@ -174,7 +175,7 @@ class API implements API_Interface {
 
 			$members_to_remove_emails = array();
 
-			foreach( array_chunk( $emails_not_for_this_list, 99 ) as $emails ) {
+			foreach ( array_chunk( $emails_not_for_this_list, 99 ) as $emails ) {
 				$members_to_remove = $klaviyo_client_lists->checkListMembership( $list_id, $emails );
 
 				$members_to_remove_emails[] = array_map(
@@ -185,12 +186,10 @@ class API implements API_Interface {
 				);
 			}
 
-			$this->logger->debug( 'Found ' . count( $members_to_remove_emails ) . ' to remove from list ' . $list_id  );
+			$this->logger->debug( 'Found ' . count( $members_to_remove_emails ) . ' to remove from list ' . $list_id );
 
 			$changes[ $list_id ]['remove'] = $members_to_remove_emails;
 		}
-
-
 
 		foreach ( $changes as $list_id => $update ) {
 
@@ -200,19 +199,17 @@ class API implements API_Interface {
 					foreach ( array_chunk( $changes[ $list_id ]['add'], 99 ) as $affiliate_batch ) {
 						$klaviyo_client_lists->addMembersToList( $list_id, $affiliate_batch );
 					}
-				} catch( KlaviyoException $e ) {
+				} catch ( KlaviyoException $e ) {
 					$this->logger->error( $e->getMessage(), array( 'trace' => $e->getTrace() ) );
 				}
-
 			} else {
 				$this->logger->notice( 'Not running on production site. No changes pushed to Klaviyo' );
 			}
 
 			$this->logger->info( 'Added ' . count( $update['add'] ) . ' members to list ' . $list_id, array( 'new_members' => $update['add'] ) );
 
-
 			if ( 'production' === wp_get_environment_type() ) {
-				foreach( array_chunk( $changes[ $list_id ]['remove'], 99 ) as $affiliate_batch ) {
+				foreach ( array_chunk( $changes[ $list_id ]['remove'], 99 ) as $affiliate_batch ) {
 					$klaviyo_client_lists->removeMembersFromList( $list_id, $affiliate_batch );
 				}
 			}
@@ -221,7 +218,7 @@ class API implements API_Interface {
 
 		}
 
-		delete_transient('bh-awp-add-affiliiates-to-klaviyo-running');
+		delete_transient( 'bh-awp-add-affiliiates-to-klaviyo-running' );
 
 		return $changes;
 	}
@@ -257,24 +254,23 @@ class API implements API_Interface {
 	/**
 	 * Function to convert from AffiliateWP object to Klaviyo array data structure.
 	 *
-	 * TODO: Use ProfileModel
-	 * @see ProfileModel
-	 *
 	 * @param Affiliate $affiliate
 	 *
-	 * @return string[]
+	 * @return ProfileModel
 	 */
 	public function get_klaviyo_array( $affiliate ): ProfileModel {
 
 		/** @var \WP_User $wp_user */
 		$wp_user = $affiliate->get_user();
 
-		return new ProfileModel(array(
-			'$email'        => $wp_user->user_email,
-			'AffiliateId'  => $affiliate->affiliate_id,
-			'PaymentEmail' => $affiliate->payment_email,
-			'WPUserID'     => $wp_user->ID,
-		));
+		return new ProfileModel(
+			array(
+				'$email'       => $wp_user->user_email,
+				'AffiliateId'  => $affiliate->affiliate_id,
+				'PaymentEmail' => $affiliate->payment_email,
+				'WPUserID'     => $wp_user->ID,
+			)
+		);
 	}
 
 }

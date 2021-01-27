@@ -23,6 +23,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       bh-awp-add-affiliates-to-klaviyo
  * Domain Path:       /languages
+ * GitHub Plugin URI: https://github.com/brianhenryie/bh-awp-add-affiliates-to-klaviyo
  */
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo;

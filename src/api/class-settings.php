@@ -74,7 +74,7 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 
 		foreach ( $list_statuses as $status ) {
 
-			if ( !empty( $affiliate_wp_settings["klaviyo_{$status}_affiliates_list_id"] ) ) {
+			if ( ! empty( $affiliate_wp_settings[ "klaviyo_{$status}_affiliates_list_id" ] ) ) {
 				$list_ids[ $status ] = $affiliate_wp_settings[ "klaviyo_{$status}_affiliates_list_id" ];
 			}
 		}

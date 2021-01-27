@@ -52,7 +52,8 @@ class Cron {
 
 		$this->logger->debug( __FUNCTION__ . ' invoked from cron' );
 
-		$this->api->update_all_klaviyo_affiliate_lists();
+		$manual = false;
+		$this->api->update_all_klaviyo_affiliate_lists( $manual );
 	}
 
 }

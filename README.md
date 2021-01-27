@@ -1,18 +1,54 @@
 # BH AWP Add Affiliates to Klaviyo
 
-Requirements:
+[AffiliateWP](https://affiliatewp.com/) add-on to sync affiliates with [Klaviyo](klaviyo.com/) lists.
 
-* [AffiliateWP](https://affiliatewp.com/)
+## Install
 
+[Download a release](https://github.com/BrianHenryIE/bh-awp-add-affiliates-to-klaviyo/releases).
+
+![Settings page](./assets/screenshot-1.png  "BH AWP Add Affiliates to Klaviyo settings page" )
+
+Only one list id needs to be set.
+
+Runs on 
+* `affwp_set_affiliate_status` action – i.e. when you change an affiliate's status.
+* Weekly cron
+* CLI: `wp affiliates_to_klaviyo add`
 
 Does *not* require the WordPress [Klaviyo plugin](https://wordpress.org/plugins/klaviyo/).
 
-Totally unofficial.
 
-// https://docs.affiliatewp.com/article/1456-affiliate-wp-cli-commands#update
+![Plugins page](./assets/screenshot-2.png "BH AWP Add Affiliates to Klaviyo on plugins.php")
+
+
+## Test
+
+Presumably can be tested using [AffiliateWP CLI](https://docs.affiliatewp.com/article/1456-affiliate-wp-cli-commands#update):
+
 `wp affwp affiliate update <username|id> <'active'|'inactive'|'pending'|'rejected'>`
 
+## TODO
+
+* If you delete an affiliate rather than moving them to inactive/rejected, they will not be removed from Klaviyo.
+* Use JavaScript autocomplete on the settings page to suggest existing lists.
+* Allow creating new Klaviyo lists from inside the Affiliate WP UI.
+* Delete setting on uninstall.
+* Schedule sync on activation (reactivation).
+* Schedule sync on save settings.
+* Add a button to run sync from setting page (i.e. with feedback).
+* Link to each AffiliateWP list from AffiliateWP UI /wp-admin/admin.php?page=affiliate-wp-affiliates&status=active
+* Link to each Klaviyo list from AffiliateWP UI.
+* PHPCS.
+* Tests!
+* Redact email addresses from logs.
+* Update log library to delete old logs.
+* Guard against two lists being set with the same id.
+
 ## Contributing
+
+[Open an issue](https://github.com/BrianHenryIE/bh-awp-add-affiliates-to-klaviyo/issues).
+
+### Develop
 
 Clone this repo, open PhpStorm, then run `composer install` to install the dependencies.
 
@@ -87,5 +123,3 @@ vendor/bin/codecept clean
 ### More Information
 
 See [github.com/BrianHenryIE/WordPress-Plugin-Boilerplate](https://github.com/BrianHenryIE/WordPress-Plugin-Boilerplate) for initial setup rationale. 
-
-# Acknowledgements
