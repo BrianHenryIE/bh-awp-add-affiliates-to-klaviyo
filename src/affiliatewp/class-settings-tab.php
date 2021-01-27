@@ -2,6 +2,12 @@
 /**
  * The Affiliate WP settings tab for the plugin.
  *
+ * TODO: On save, schedule a sync.
+ * TODO: A button to process all existing affiliates.
+ * TODO: Auto-complete the lists from existing lists.
+ * TODO: Allow creating new lists.
+ * TODO: Link to each list /wp-admin/admin.php?page=affiliate-wp-affiliates&status=active
+ *
  * @link       http://example.com
  * @since      1.0.0
  *
@@ -11,8 +17,6 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo\affiliatewp;
 
-use BH_AWP_Add_Affiliates_to_Klaviyo\WPPB\WPPB_Object;
-
 /**
  * Registers the settings tab and the individual settings with AffiliateWP
  *
@@ -20,7 +24,7 @@ use BH_AWP_Add_Affiliates_to_Klaviyo\WPPB\WPPB_Object;
  * @subpackage BH_AWP_Add_Affiliates_to_Klaviyo/affiliatewp
  * @author     Brian Henry <BrianHenryIE@gmail.com>
  */
-class Settings_Tab extends WPPB_Object {
+class Settings_Tab {
 
 	/**
 	 * Register the Klaviyo settings tab with AffiliateWP.
@@ -57,6 +61,17 @@ class Settings_Tab extends WPPB_Object {
 	 */
 	public function register_settings( $settings ) {
 
+		// Try to get the public API key from the official Klaviyo plugin.
+		$klaviyo_plugin_settings = get_option( 'klaviyo_settings', array() );
+		$klaviyo_public_api_key = '';
+		$klaviyo_private_api_key = '';
+		if ( isset( $klaviyo_plugin_settings['public_api_key'] ) ) {
+			$klaviyo_public_api_key = $klaviyo_plugin_settings['public_api_key'];
+		}
+		if ( isset( $klaviyo_plugin_settings['private_api_key'] ) ) {
+			$klaviyo_private_api_key = $klaviyo_plugin_settings['private_api_key'];
+		}
+
 		$settings['klaviyo'] = array(
 			'klaviyo_options_header'              => array(
 				'name' => '<strong>' . __( 'Klaviyo Integration Options', 'bh-awp-add-affiliates-to-klaviyo' ) . '</strong>',
@@ -66,7 +81,14 @@ class Settings_Tab extends WPPB_Object {
 			'klaviyo_private_api_key'             => array(
 				'name'              => __( 'Klaviyo Private API Key', 'bh-awp-add-affiliates-to-klaviyo' ),
 				/* translators: %s: Klaviyo account URL. */
-				'desc'              => sprintf( __( 'An API key for your Klaviyo account, found at  <a href="%s" target="_blank">klaviyo.com/account#api-keys-tab</a>.', 'bh-awp-add-affiliates-to-klaviyo' ), 'https://www.klaviyo.com/account#api-keys-tab' ),
+				'desc'              => sprintf( __( 'Find your API keys at  <a href="%s" target="_blank">klaviyo.com/account#api-keys-tab</a>.', 'bh-awp-add-affiliates-to-klaviyo' ), 'https://www.klaviyo.com/account#api-keys-tab' ),
+				'type'              => 'text',
+				'default'           => $klaviyo_private_api_key,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'klaviyo_public_api_key'              => array(
+				'name'              => __( 'Klaviyo Public API Key', 'bh-awp-add-affiliates-to-klaviyo' ),
+				'default'           => $klaviyo_public_api_key,
 				'type'              => 'text',
 				'sanitize_callback' => 'sanitize_text_field',
 			),
@@ -91,9 +113,6 @@ class Settings_Tab extends WPPB_Object {
 				'type' => 'text',
 			),
 		);
-
-		// TODO: A button to process all existing affiliates.
-		// TODO: Harder: verify the email addresses in each Klaviyo list are in the correct list.
 
 		return $settings;
 

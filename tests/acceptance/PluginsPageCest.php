@@ -10,7 +10,6 @@ class PluginsPageCest
 	    $I->amOnPluginsPage();
     }
 
-
 	/**
 	 *
 	 * @param AcceptanceTester $I
@@ -38,6 +37,5 @@ class PluginsPageCest
 
 		$I->canSeeLink('GitHub', 'https://github.com/BrianHenryIE/bh-awp-add-affiliates-to-klaviyo' );
 	}
-
 
 }

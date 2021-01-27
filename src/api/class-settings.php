@@ -11,6 +11,9 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo\api;
 
+use BH_AWP_Add_Affiliates_to_Klaviyo\BrianHenryIE\WP_Logger\api\Logger_Settings_Interface;
+use BH_AWP_Add_Affiliates_to_Klaviyo\Psr\Log\LogLevel;
+
 /**
  * Getters to provide an OO interface for the settings saved on the AffiliateWP setting tab "Klaviyo".
  *
@@ -18,7 +21,7 @@ namespace BH_AWP_Add_Affiliates_to_Klaviyo\api;
  *
  * @package BH_AWP_Add_Affiliates_to_Klaviyo\api
  */
-class Settings {
+class Settings implements Settings_Interface, Logger_Settings_Interface {
 
 	/**
 	 * The Klaviyo API key.
@@ -29,7 +32,7 @@ class Settings {
 	 *
 	 * @return string
 	 */
-	public function get_klaviyo_private_api_key(): string {
+	public function get_klaviyo_private_api_key(): ?string {
 
 		$affiliate_wp_settings = get_option( 'affwp_settings', array() );
 
@@ -37,7 +40,18 @@ class Settings {
 			return $affiliate_wp_settings['klaviyo_private_api_key'];
 		}
 
-		return '';
+		return null;
+	}
+
+	public function get_klaviyo_public_api_key(): ?string {
+
+		$affiliate_wp_settings = get_option( 'affwp_settings', array() );
+
+		if ( array_key_exists( 'klaviyo_public_api_key', $affiliate_wp_settings ) ) {
+			return $affiliate_wp_settings['klaviyo_public_api_key'];
+		}
+
+		return null;
 	}
 
 	/**
@@ -45,7 +59,7 @@ class Settings {
 	 *
 	 * @return string[] 'rejected'|'pending'|'active'|'inactive' => Klaviyo list ids.
 	 */
-	public function get_klaviyo_list_ids() {
+	public function get_klaviyo_affiliate_list_ids(): array {
 
 		$list_ids = array();
 
@@ -60,7 +74,7 @@ class Settings {
 
 		foreach ( $list_statuses as $status ) {
 
-			if ( array_key_exists( "klaviyo_{$status}_affiliates_list_id", $affiliate_wp_settings ) ) {
+			if ( !empty( $affiliate_wp_settings["klaviyo_{$status}_affiliates_list_id"] ) ) {
 				$list_ids[ $status ] = $affiliate_wp_settings[ "klaviyo_{$status}_affiliates_list_id" ];
 			}
 		}
@@ -68,4 +82,25 @@ class Settings {
 		return $list_ids;
 	}
 
+
+	public function get_plugin_slug(): string {
+		return 'bh-awp-add-affiliates-to-klaviyo';
+	}
+
+	public function get_log_level(): string {
+		return LogLevel::INFO;
+	}
+
+	/**
+	 * For friendly display.
+	 *
+	 * @return string
+	 */
+	public function get_plugin_name(): string {
+		return 'Add Affiliates to Klaviyo';
+	}
+
+	public function get_plugin_basename(): string {
+		return 'bh-awp-add-affiliates-to-klaviyo/bh-awp-add-affiliates-to-klaviyo.php';
+	}
 }

@@ -18,6 +18,6 @@ modules:
             domain: "%TEST_SITE_WP_DOMAIN%"
             adminEmail: "%TEST_SITE_ADMIN_EMAIL%"
             title: "bh-awp-add-affiliates-to-klaviyo"
-            plugins: []
-            activatePlugins: []
+            plugins: ["bh-awp-add-affiliates-to-klaviyo/bh-awp-add-affiliates-to-klaviyo.php", "affiliate-wp/affiliate-wp.php"]
+            activatePlugins: ["affiliate-wp/affiliate-wp.php"]
 bootstrap: _bootstrap.php

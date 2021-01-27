@@ -12,7 +12,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "process-timeout": 0
+        "process-timeout": 0,
+        "sort-packages": true
     },
     "repositories": [
         {
@@ -34,45 +35,48 @@
         {
             "type":"composer",
             "url":"https://wpackagist.org"
+        },
+        {
+            "type": "path",
+            "url": "../bh-wp-logger"
+        },
+        {
+            "url": "https://github.com/BrianHenryIE/bh-wp-logger",
+            "type": "git"
         }
     ],
     "require": {
-        "brianhenryie/wppb-lib": "dev-master",
         "php": ">=7.2",
-        "pablo-sg-pacheco/wp-namespace-autoloader": "dev-master",
-        "katzgrau/klogger": "dev-master"
+        "brianhenryie/wp-logger": "dev-master",
+        "brianhenryie/wppb-lib": "dev-master",
+        "klaviyo/php-sdk": "^2.2",
+        "pablo-sg-pacheco/wp-namespace-autoloader": "dev-master"
     },
     "require-dev": {
-        "wpackagist-theme/twentytwenty":"*",
-        "cweagans/composer-patches": "~1.0",
-        "coenjacobs/mozart": "dev-master",
-        "dealerdirect/phpcodesniffer-composer-installer": "*",
-        "wp-coding-standards/wpcs": "*",
-        "wordpress/wordpress": "^5.4",
-        "kporras07/composer-symlinks": "dev-master",
-        "phpunit/phpunit": ">=7.0",
-        "phpunit/phpcov": "^5.0",
         "10up/wp_mock": "0.4.2",
         "brianhenryie/composer-phpstorm": "dev-master",
-        "phpcompatibility/phpcompatibility-wp": "*",
-        "lucatume/wp-browser": "*",
         "codeception/module-asserts": "^1.0",
-        "voku/portable-ascii": "dev-master",
+        "codeception/module-cli": "^1.0",
         "codeception/module-db": "^1.0.0",
+        "codeception/module-filesystem": "^1.0",
         "codeception/module-phpbrowser": "^1.0.0",
         "codeception/module-webdriver": "^1.0",
-        "codeception/module-filesystem": "^1.0",
-        "codeception/module-cli": "^1.0",
         "codeception/util-universalframework": "^1.0",
-        "wpackagist-plugin/klaviyo": "^2.2"
+        "coenjacobs/mozart": "dev-master#17268e232f4bc88b651fbcf3c6b961ffddad53fc",
+        "cweagans/composer-patches": "~1.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "kporras07/composer-symlinks": "dev-master",
+        "lucatume/wp-browser": "*",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "phpunit/phpcov": "^5.0",
+        "phpunit/phpunit": ">=7.0",
+        "voku/portable-ascii": "dev-master",
+        "wordpress/wordpress": "^5.4",
+        "wp-cli/wp-cli-bundle": "^2.4",
+        "wp-coding-standards/wpcs": "*",
+        "wpackagist-theme/twentytwenty": "*"
     },
     "extra": {
-        "patches": {
-            "coenjacobs/mozart": {
-                "DIRECTORY_SEPARATOR": "https://github.com/coenjacobs/mozart/pull/61.patch",
-                "Delete empty directories": "https://github.com/coenjacobs/mozart/pull/59.patch"
-            }
-        },
         "mozart": {
             "dep_namespace": "BH_AWP_Add_Affiliates_to_Klaviyo\\",
             "dep_directory": "/src/vendor/",
@@ -80,6 +84,11 @@
             "classmap_directory": "/src/dependencies/",
             "delete_vendor_directories": false,
             "override_autoload": {
+                "brianhenryie/wp-logger": {
+                    "psr-4": {
+                        "BrianHenryIE\\WP_Logger\\": "src"
+                    }
+                },
                 "katzgrau/klogger": {
                     "psr-4": {
                         "Katzgrau\\KLogger\\": "src/"

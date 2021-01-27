@@ -11,7 +11,8 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo\admin;
 
-use BH_AWP_Add_Affiliates_to_Klaviyo\WPPB\WPPB_Object;
+use Affiliate_WP;
+use BH_AWP_Add_Affiliates_to_Klaviyo\BrianHenryIE\WPPB\WPPB_Object;
 
 /**
  * This class adds a `Settings` link on the plugins.php page.
@@ -30,6 +31,10 @@ class Plugins_Page extends WPPB_Object {
 	 * @return array The links to display below the plugin name on plugins.php.
 	 */
 	public function action_links( $links_array ) {
+
+		if ( ! class_exists( Affiliate_WP::class ) ) {
+			return $links_array;
+		}
 
 		$settings_url = admin_url( 'admin.php?page=affiliate-wp-settings&tab=klaviyo' );
 

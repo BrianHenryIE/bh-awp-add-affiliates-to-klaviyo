@@ -23,6 +23,8 @@ namespace BH_AWP_Add_Affiliates_to_Klaviyo\includes;
  */
 class Activator {
 
+	const LAST_ACTIVATED_TIME_OPTION_NAME = 'bh-awp-add-affiliates-to-klaviyo-last-activated-time';
+
 	/**
 	 * Short Description. (use period)
 	 *
@@ -33,6 +35,8 @@ class Activator {
 	public static function activate() {
 
 		// TODO: Add a banner linking to Settings.
+
+		update_option( self::LAST_ACTIVATED_TIME_OPTION_NAME, time() );
 	}
 
 }

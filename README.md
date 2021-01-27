@@ -62,6 +62,15 @@ vendor/bin/codecept run integration;
 vendor/bin/codecept run acceptance;
 ```
 
+Codecoverage
+
+```
+vendor/bin/codecept run unit --coverage unit.cov;
+vendor/bin/codecept run wpunit --coverage wpunit.cov;
+vendor/bin/phpcov merge --clover tests/_output/clover.xml --html tests/_output/html tests/_output --text;
+```
+
+
 To save changes made to the acceptance database:
 
 ```

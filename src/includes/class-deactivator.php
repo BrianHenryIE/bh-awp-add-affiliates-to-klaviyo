@@ -11,6 +11,8 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo\includes;
 
+use BH_AWP_Add_Affiliates_to_Klaviyo\api\API_Interface;
+
 /**
  * Fired during plugin deactivation.
  *
@@ -32,6 +34,13 @@ class Deactivator {
 	 */
 	public static function deactivate() {
 
+		$cron_hook = API_Interface::UPDATE_ALL_KLAVIYO_AFFILIATE_LISTS_CRON_HOOK;
+
+		if ( false !== wp_get_scheduled_event( $cron_hook ) ) {
+			return;
+		}
+
+		wp_clear_scheduled_hook( $cron_hook );
 	}
 
 }

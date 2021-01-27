@@ -47,3 +47,5 @@ src/dependencies/
 wp-content/
 
 *.zip
+.env.secret
+*secret*

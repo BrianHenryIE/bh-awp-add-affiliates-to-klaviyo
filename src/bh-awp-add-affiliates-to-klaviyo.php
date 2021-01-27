@@ -15,7 +15,8 @@
  * Plugin Name:       Add Affiliates to Klaviyo
  * Plugin URI:        http://github.com/BrianHenryIE/bh-awp-add-affiliates-to-klaviyo/
  * Description:       Updates Klaviyo lists when affiliates are marked active, inactive, pending, rejected.
- * Version:           1.0.0
+ * Version:           2.0.0
+ * Requires PHP:      7.4
  * Author:            Brian Henry
  * Author URI:        http://BrianHenry.ie
  * License:           GPL-2.0+
@@ -26,11 +27,15 @@
 
 namespace BH_AWP_Add_Affiliates_to_Klaviyo;
 
+use BH_AWP_Add_Affiliates_to_Klaviyo\api\API;
 use BH_AWP_Add_Affiliates_to_Klaviyo\api\Settings;
+use BH_AWP_Add_Affiliates_to_Klaviyo\BrianHenryIE\WP_Logger\Logger;
+use BH_AWP_Add_Affiliates_to_Klaviyo\BrianHenryIE\WPPB\WPPB_Loader;
 use BH_AWP_Add_Affiliates_to_Klaviyo\includes\Activator;
 use BH_AWP_Add_Affiliates_to_Klaviyo\includes\Deactivator;
 use BH_AWP_Add_Affiliates_to_Klaviyo\includes\BH_AWP_Add_Affiliates_To_Klaviyo;
-use BH_AWP_Add_Affiliates_to_Klaviyo\WPPB\WPPB_Loader;
+use BH_AWP_Add_Affiliates_to_Klaviyo\Klaviyo\Klaviyo;
+
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -44,7 +49,7 @@ require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION', '1.0.0' );
+define( 'BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION', '2.0.0' );
 
 /**
  * The code that runs during plugin activation.
@@ -81,15 +86,33 @@ function instantiate_bh_awp_add_affiliates_to_klaviyo() {
 
 	$settings = new Settings();
 
-	$loader = new WPPB_Loader();
-	$plugin = new BH_AWP_Add_Affiliates_To_Klaviyo( $settings, $loader );
+	$logger = Logger::instance( $settings );
 
-	return $plugin;
+	if ( ! is_null( $settings->get_klaviyo_private_api_key() ) || is_null( $settings->get_klaviyo_public_api_key() ) ) {
+		$klaviyo_client = new Klaviyo( $settings->get_klaviyo_private_api_key(), $settings->get_klaviyo_public_api_key() );
+	} else {
+		$logger->debug(
+			'Klaviyo settings not configured',
+			array(
+				'private_api_key' => $settings->get_klaviyo_private_api_key(),
+				'public_api_key'  => $settings->get_klaviyo_public_api_key(),
+			)
+		);
+	}
+
+	$api    = new API( $klaviyo_client, $settings, $logger );
+	$loader = new WPPB_Loader();
+
+	/**
+	 * The core plugin class that is used to define internationalization,
+	 * admin-specific hooks, and frontend-facing site hooks.
+	 */
+	$plugin = new BH_AWP_Add_Affiliates_To_Klaviyo( $loader, $api, $settings, $logger );
+
+	$plugin->run();
+
+	return $api;
 }
 
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and frontend-facing site hooks.
- */
-$GLOBALS['bh_awp_add_affiliates_to_klaviyo'] = $bh_awp_add_affiliates_to_klaviyo = instantiate_bh_awp_add_affiliates_to_klaviyo();
-$bh_awp_add_affiliates_to_klaviyo->run();
+$GLOBALS['bh_awp_add_affiliates_to_klaviyo'] = instantiate_bh_awp_add_affiliates_to_klaviyo();
+
