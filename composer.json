@@ -33,6 +33,10 @@
             "type": "git"
         },
         {
+            "url": "https://github.com/BrianHenryIE/bh-wp-dev",
+            "type": "git"
+        },
+        {
             "type":"composer",
             "url":"https://wpackagist.org"
         },
@@ -55,6 +59,7 @@
     "require-dev": {
         "10up/wp_mock": "0.4.2",
         "brianhenryie/composer-phpstorm": "dev-master",
+        "brianhenryie/wp-dev": "dev-master",
         "codeception/module-asserts": "^1.0",
         "codeception/module-cli": "^1.0",
         "codeception/module-db": "^1.0.0",
@@ -133,6 +138,18 @@
             "mkdir -p wordpress/wp-content/uploads",
             "BrianHenryIE\\ComposerPhpStorm\\ExcludeFolders::update",
             "BrianHenryIE\\ComposerPhpStorm\\PHPUnitRunConfigurations::update"
+        ],
+        "save-acceptance-database": [
+            "export $(grep -v '^#' .env.testing | xargs); mysqldump -u $TEST_SITE_DB_USER -p$TEST_SITE_DB_PASSWORD  $TEST_SITE_DB_NAME > tests/_data/dump.sql;"
+        ],
+        "coverage-tests": [
+            "vendor/bin/codecept run unit --coverage unit.cov",
+            "vendor/bin/codecept run wpunit --coverage wpunit.cov",
+            "vendor/bin/phpcov merge --clover tests/_output/clover.xml --html tests/_output/html tests/_output --text;",
+            "open tests/_output/html/index.html"
+        ],
+        "create-plugin-archive": [
+            "BrianHenryIE\\WP_Dev\\CreatePluginArchive::createZip"
         ]
     }
 }
