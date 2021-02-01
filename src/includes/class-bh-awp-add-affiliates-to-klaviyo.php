@@ -71,7 +71,7 @@ class BH_AWP_Add_Affiliates_To_Klaviyo extends WPPB_Plugin_Abstract {
 		if ( defined( 'BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION' ) ) {
 			$version = BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION;
 		} else {
-			$version = '2.0.0';
+			$version = '2.0.1';
 		}
 		$plugin_name = 'bh-awp-add-affiliates-to-klaviyo';
 

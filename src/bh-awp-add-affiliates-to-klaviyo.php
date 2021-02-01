@@ -15,7 +15,7 @@
  * Plugin Name:       Add Affiliates to Klaviyo
  * Plugin URI:        http://github.com/BrianHenryIE/bh-awp-add-affiliates-to-klaviyo/
  * Description:       Updates Klaviyo lists when affiliates are marked active, inactive, pending, rejected.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Requires PHP:      7.4
  * Author:            Brian Henry
  * Author URI:        http://BrianHenry.ie
@@ -50,7 +50,7 @@ require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION', '2.0.0' );
+define( 'BH_AWP_ADD_AFFILIATES_TO_KLAVIYO_VERSION', '2.0.1' );
 
 /**
  * The code that runs during plugin activation.
