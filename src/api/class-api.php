@@ -241,7 +241,7 @@ class API implements API_Interface {
 					// Adds members to list without affecting consent status.
 					$klaviyo_client_lists->addMembersToList( $list_id, array( $klaviyo_affiliate_data ) );
 				} else {
-					$klaviyo_client_lists->removeMembersFromList( $list_id, array( $klaviyo_affiliate_data['email'] ) );
+					$klaviyo_client_lists->removeMembersFromList( $list_id, array( $klaviyo_affiliate_data->email ) );
 
 				}
 			} else {
